@@ -1,0 +1,9 @@
+# Merge into the active config using Codex Settings -> Open config.toml.
+# Do not replace existing auth/provider/MCP configuration.
+# Keep the model selected in the client; no hardcoded model ID here.
+model_reasoning_effort = "medium"
+tool_output_token_limit = 6000
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+# If default_permissions is already used, keep that permission-profile approach
+# and do not add sandbox_mode: these configuration systems are mutually exclusive.

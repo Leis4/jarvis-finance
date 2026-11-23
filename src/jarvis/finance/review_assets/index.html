@@ -1,0 +1,139 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jarvis — личные финансы</title><style>FRONTEND_STYLE</style>
+<body><a class="skip-link" href="#app-main">Перейти к содержимому</a>
+<nav class="sidebar" aria-label="Разделы Jarvis"><div class="brand">JARVIS</div>
+<button data-nav="home">Главная</button><button data-nav="operations">Операции</button><button data-nav="learning">Обучение Jarvis</button><button data-nav="analytics">Аналитика</button><button data-nav="assistant">AI-ассистент</button><button data-nav="research">Интернет-исследования</button><button data-nav="sources">Сбербанк и источники</button><button data-nav="tasks">Задачи</button><button data-nav="settings">Настройки</button><small>Личная рабочая панель<br>Автоматический импорт выключен</small></nav>
+<main id="app-main"><header class="page-header"><div><div class="eyebrow">Личные финансы · локально</div><h1 id="page-title" tabindex="-1">Главная</h1></div><button id="theme-toggle" aria-label="Переключить светлую и тёмную тему">Светлая тема</button></header>
+<section data-view="home"><h2>Ваша финансовая картина</h2><p>Начните с проверки операций. Категория сохраняется отдельно от принятия финансовых данных.</p><div class="metrics"><div class="metric"><span>Ожидают категории</span><strong id="home-pending">Загрузка…</strong></div><div class="metric"><span>Подтверждено владельцем</span><strong id="home-labels">Загрузка…</strong></div><div class="metric"><span>Принятый баланс</span><strong>Не проверен</strong><span>Подробности — в аналитике и источниках</span></div></div><button class="primary" id="start-learning">Разобрать операции</button><p id="home-state"></p></section>
+<section id="jarvis-chat" data-view="assistant" hidden><h2>Чат с Jarvis</h2><p>Личные финансовые вопросы решаются локально. Не вводите ключи, PIN и полные номера счетов.</p>
+<label>Закрытый месяц (необязательно)<input id="chat-month" type="month"></label>
+<label><input id="chat-cloud" type="checkbox">Отдельно разрешить публичный source-bound запрос Qwen (после проверки ключа; возможное списание)</label>
+<label><input id="chat-explain" type="checkbox">Экспериментальное объяснение своими словами: истинность перефразирования не подтверждена</label>
+<textarea id="chat-input" maxlength="2000" placeholder="Привет, Jarvis. Расскажи, что ты умеешь"></textarea>
+<button id="chat-send">Отправить</button><button id="chat-history">История</button><p id="chat-state" role="status"></p><div id="chat-turns" aria-live="polite"></div>
+</section>
+<section data-view="operations" hidden><h2>Операции</h2><p>Совпадение записей и категория — разные решения.</p><details><summary>Поиск и фильтры</summary><div class="filter-grid"><label>Группа причины <select id="reason"><option value="">Все причины</option></select></label>
+<label>Совпадение банковских записей <select id="classification"><option value="">Все</option>
+<option>exact/high-confidence</option><option>likely</option><option>ambiguous</option><option>no candidate</option></select></label>
+<label>Статус <select id="status"><option value="">Все статусы</option><option value="pending_review">Не проверено</option>
+<option value="confirm_existing">Подтверждено существующее</option><option value="approve_new">Новое для staging-копии</option>
+<option value="reject">Отклонено</option></select></label>
+<label>Описание / мерчант <input id="search" maxlength="200"></label>
+<label>Карта: последние 4 цифры <input id="card-filter" maxlength="4" inputmode="numeric"></label>
+<label>Период: с <input id="date-start" type="date"> по <input id="date-end" type="date"></label>
+<label>Движение по знаку выписки (не доход/расход) <select id="direction"><option value="">Все</option>
+<option value="debit">Списания</option><option value="credit">Поступления</option><option value="zero">Нулевое</option>
+<option value="unknown">Знак не подтверждён</option></select></label>
+</div></details><button id="refresh">Покниколайь очередь</button><span id="counts"></span><div id="list"></div>
+<button id="previous" disabled>Предыдущая страница</button><button id="next" disabled>Следующая страница</button></section>
+<section data-view="analytics" hidden><h2>Мои счета — история по выпискам</h2><button id="statement-history">Покниколайь историческое банковское движение</button><div id="statement-history-data" aria-live="polite"></div></section><section data-view="learning" hidden><h2>Jarvis предлагает разобрать операции группами</h2><button id="category-group-review">Покниколайь первые 20 предложений и вопросов</button><div id="category-group-review-data" aria-live="polite"></div></section><section data-view="learning" hidden><h2>Второй annotation preview: локальный контекст</h2>
+<p>Оригиналы не импортируются заново. Проверяйте каждое выбранное поле: это название организации или банковское назначение, без людей, реквизитов и секретов. Публичный файл не анонимный; загрузка в облако не разрешается автоматически.</p>
+<button id="context-load">Извлечь контекст локально (read-only)</button>
+<button id="context-local" disabled>Сохранить STRICTLY OWNER-LOCAL preview</button>
+<p id="context-state" role="status"></p><div id="context-rows"></div>
+<button id="context-prev" disabled>Предыдущие 20</button><button id="context-next" disabled>Следующие 20</button>
+<label><input id="context-holdout" type="checkbox">Зарезервировать предложенные группы для будущей независимой проверки человеком; исключить их контекст из AI-файла</label>
+<p>Группы предварительные: независимость merchant entities и human holdout ещё не доказаны. Обучение при отсутствии подтверждённых меток не запускается.</p>
+<label>Кто проверил поля <input id="context-owner" maxlength="100"></label>
+<label><input id="context-confirm" type="checkbox">Проверил выбранные поля по локальным оригиналам: нет людей, карточных/банковских идентификаторов, контактов, адресов и секретов. Разрешаю только создание локального файла, не загрузку и не human labels.</label>
+<button id="context-receipt" disabled>Сохранить OWNER-LOCAL review manifest для импорта ответа</button><button id="context-export" disabled>Сохранить только проверенный публичный контекст</button></section><section data-view="learning" hidden><h2>AI-аннотация принятых наблюдений</h2><p>Это предложения, не human labels. Файлы не отправляются в облако автоматически. Перед добровольной загрузкой просмотрите JSON; даже public-variant не анонимный.</p><button id="annotation-public">Preview: публичные merchant hints</button><button id="annotation-private">Preview: private local + суммы и даты</button><button id="annotation-download" disabled>Сохранить показанный JSON</button><details><summary>Preview (локально)</summary><pre id="annotation-preview"></pre></details><label>Ответ AI (JSON до 2 МБ)<input id="annotation-file" type="file" accept=".json,application/json"></label><label>Локальный context review manifest (для второго экспорта)<input id="context-review-file" type="file" accept=".json,application/json"></label><label>Кто проверяет файл<input id="annotation-actor" maxlength="100"></label><label><input id="annotation-consent" type="checkbox">Разрешаю сохранить только AI_PROPOSAL, без подтверждения категорий</label><button id="annotation-import">Проверить и загрузить предложения</button><button id="annotation-refresh">Покниколайь очередь предложений</button><p id="annotation-state" role="status"></p><div id="annotation-items"></div><button id="annotation-next" disabled>Следующие 20</button></section><section data-view="analytics" hidden><h2>Финансы по принятым выпискам</h2><p>Сначала примите источник в разделе «Сбербанк и источники». Поступления банка включают переводы; это не заработок. Доходы и расходы требуют подтверждённых экономических категорий. Остатки исторические, текущие свободные средства неизвестны.</p><label>С <input id="statement-start" type="date" value="2026-09-01"></label><label>По <input id="statement-end" type="date" value="2026-09-30"></label><label>Валюта <select id="statement-currency"><option>RUB</option><option>USD</option><option>EUR</option></select></label><button id="statement-report">Покниколайь отчёт</button><p id="statement-report-state" role="status"></p><div id="statement-report-data"></div><div id="statement-category-chart" aria-label="Расходы по подтверждённым категориям"></div></section>
+<section data-view="analytics" hidden><h2>Финансовые калькуляторы</h2><p>Явный гипотетический сценарий. Только локальный Decimal, без обращения к модели или банку.</p><label>Расчёт <select id="calc-mode"><option value="hypothetical_compound">Сложные проценты</option><option value="hypothetical_loan">Аннуитетный кредит</option><option value="hypothetical_inflation">Поправка на инфляцию</option></select></label><label>Начальная сумма / сумма кредита <input id="calc-principal" inputmode="decimal"></label><label>Номинальная годовая ставка / годовая инфляция, % <input id="calc-rate" inputmode="decimal"></label><label>Срок месяцев <input id="calc-months" type="number" min="1" max="600" value="12"></label><label>Дата начала <input id="calc-start" type="date"></label><label>Валюта <select id="calc-currency"><option>RUB</option><option>USD</option><option>EUR</option></select></label><button id="calc-run">Рассчитать без облака</button><p id="calc-state" role="status"></p></section><section data-view="analytics" hidden><h2>Калькулятор накоплений</h2><p>Явные гипотетические суммы. Считает Python Decimal, облачных расходов нет. Укажите срок, чтобы узнать необходимый взнос.</p>
+<label>Цель <input id="goal-target" inputmode="decimal"></label><label>Начальная сумма (включая явный 0)<input id="goal-starting" inputmode="decimal"></label>
+<label>Ежемесячно <input id="goal-monthly" inputmode="decimal"></label><label>Валюта <select id="goal-currency"><option>RUB</option><option>USD</option><option>EUR</option></select></label>
+<label>Начало <input id="goal-start" type="date"></label><label>Горизонт месяцев <input id="goal-months" type="number" min="1" max="600" value="12"></label>
+<label>Срок цели (необязательно)<input id="goal-deadline" type="date"></label><label>Гипотетическая задержка взносов, месяцев<input id="goal-delay" type="number" min="0" max="600" value="0"></label>
+<button id="goal-chat">Рассчитать цель локально</button><p>Взносы на месячную годовщину начала, без процентов и FX. Прогноз не подтверждает доступность денег.</p></section><section data-view="analytics" hidden><h2>Финансовый вопрос</h2><label>Завершённый месяц <input id="question-month" type="month"></label>
+<label>Валюта <input id="question-currency" value="RUB" maxlength="3"></label>
+<label>Вопрос по-русски (необязательно) <input id="question-text" maxlength="500" placeholder="Сколько я потратил?"></label>
+<select id="question-intent"><option value="spending">Сколько потрачено?</option><option value="category_growth">Какие категории выросли?</option>
+<option value="expense_history">История расходов и категории</option>
+<option value="recurring">Какие расходы повторяются?</option><option value="duplicates">Есть ли подозрительные дубли?</option>
+<option value="missing_data">Какие данные отсутствуют?</option><option value="stale_balances">Какие остатки устарели?</option>
+<option value="available_funds">Сколько доступно?</option></select><button id="question">Ответить по принятым источникам</button>
+<p>Pending наблюдения не становятся финансовыми фактами. Текущие свободные средства проверяются отдельно в capacity preview.</p><pre id="question-data"></pre><div id="category-chart"></div><button id="pending-review">Перейти к непроверенным операциям</button></section>
+<section data-view="learning" hidden><h2>Память решений</h2><button id="memory">Покниколайь подтверждения и заметки</button><pre id="memory-data"></pre><div id="memory-notes"></div>
+
+<button id="ai-history">История расходов ИИ без содержания запросов</button><pre id="ai-history-data"></pre>
+<select id="note-kind"><option value="preference">Предпочтение</option><option value="hypothesis">Гипотеза</option></select>
+<input id="note-text" maxlength="500" placeholder="Локальная заметка, не финансовый факт"><button id="note-save">Сохранить заметку</button></section>
+<section data-view="home"><h2>Что заметил Jarvis</h2><button id="insights-scan">Проверить выбранный месяц локально</button><button id="insights-refresh">Покниколайь актуальные карточки</button><button class="primary" id="local-autopilot" disabled>Jarvis, проанализируй мои финансы</button><label>Месяц AI-анализа <input id="autopilot-month" type="month"></label><button id="qwen-readiness">Готовность Qwen</button><button id="qwen-autopilot" disabled>Разрешить один Qwen-анализ · платно</button><div id="autopilot-data" aria-live="polite"></div><div id="insights-data"></div></section>
+<section data-view="learning" hidden><h2>Личное обучение категориям</h2><button id="labels-progress">Следующие 20 операций для проверки</button><pre id="labels-progress-data"></pre><div id="labels-shortlist"></div></section>
+<section data-view="tasks" hidden><h2>Действия Jarvis</h2><button id="agent-tasks">Покниколайь результаты</button><div id="agent-results"></div></section>
+<section id="detail" hidden role="dialog" aria-modal="true" aria-labelledby="detail-title"><button id="detail-close" class="close-detail" aria-label="Закрыть операцию">✕</button><h2 id="detail-title">Операция</h2><div id="operation-summary"></div><p id="suggestion-summary"></p><button id="category-assist">Спросить Jarvis</button><p id="category-assist-state" role="status"></p><details><summary>Отдельно разрешаемое предложение Qwen</summary><p>Только предложение, не человеческая метка. Проверьте поля перед каждым запросом. Нет автоматического повтора.</p><button id="teacher-preview">Покниколайь выбранные для передачи поля</button><pre id="teacher-preview-data"></pre><label><input id="teacher-send-confirm" type="checkbox">Я проверил показанные поля и разрешаю один запрос в пределах действующего разрешения</label><button id="teacher-send">Получить предложение Qwen</button><p id="teacher-result" role="status"></p></details><details><summary>Докниколайельства и источник</summary><pre id="evidence"></pre></details>
+<h2>Категория</h2><p>Подтверждение события не подтверждает банковскую категорию.</p>
+<label>Выберите категорию <select id="category"><option value="">Выберите категорию явно</option></select></label>
+<p>Подтверждая категорию, вы отмечаете, что проверили описание и назначение операции. Основание можно изменить ниже.</p><button data-label="confirm" class="primary">Подтвердить категорию</button><button data-label="reject">Отклонить категорию</button>
+<button data-label="revoke">Отменить метку</button><button id="skip-operation">Пропустить и далее</button><label>Кто подтверждает <input id="actor" required placeholder="Укажите один раз"></label>
+<label>Основание <select id="quick-reason"><option value="Я проверил описание и назначение операции">Проверил описание и назначение</option><option value="Я узнаю мерчанта и эту покупку">Узнаю мерчанта и покупку</option><option value="Я исправляю ранее выбранную категорию">Исправляю категорию</option></select></label><label>Комментарий <textarea id="why" required placeholder="Или напишите своё основание"></textarea></label>
+
+<details><summary>Сопоставление финансового события — отдельная проверка</summary><label>Кандидат DB ID <select id="candidate"><option value="">Выберите явно</option></select></label><button data-action="confirm_existing">Подтвердить существующее событие</button>
+<button data-action="approve_new">Подтвердить новое для staging-копии</button>
+<button data-action="reject">Отклонить</button><button data-action="revoke">Отменить решение</button>
+<button id="group-review">Решение для одинаковой доказанной группы</button>
+<button id="history">Покниколайь audit trail</button><button id="source">Открыть исходный PDF</button>
+</details></section>
+<section data-view="sources" hidden><h2>Выписки → проверенные финансы</h2><p>Оригинал остаётся локально. PDF: счёт, период и остатки извлекаются автоматически. Загрузка не означает принятие денег или категории. Legacy SQLite не объединяется.</p>
+<label>Оригинальная выписка <input id="statement-file" type="file" accept=".pdf,.csv"></label><details><summary>CSV без банковской шапки</summary><p>Нужны подтверждённые декларации из исходного документа. Для PDF этот шаг не нужен.</p><label>Исходный CSV scope JSON <textarea id="statement-csv-scope" maxlength="8192" placeholder='account, currency, start, end, opening, closing, movement, operation_count, source_reference, mapping_confirmed, currency_evidence_confirmed'></textarea></label></details>
+<button id="statement-upload">Проверить локально</button><button id="statement-refresh">Мои выписки</button><p id="statement-state" role="status"></p><div id="statement-list"></div><button id="pending-source-review">Проверка pending банковских источников</button><div id="pending-source-packet"></div><button id="source-group-preview">Проверить групповое принятие выписок</button><div id="source-group-packet" aria-live="polite"></div></section>
+
+<section data-view="sources" hidden><button id="report">Отчёт источников и покрытия</button><button id="labels">Экспорт human labels / статус ML</button>
+<button id="export">Скачать review packet и audit trail</button>
+<button id="availability">Доступность источников и recovery</button>
+<button id="download-availability">Скачать availability evidence</button>
+<button id="provenance">Проверить provenance rehearsal</button>
+<pre id="product"></pre></section><p id="message" role="status"></p>
+<section data-view="analytics" hidden><h2>Финансовая рабочая панель — только просмотр</h2>
+<p>Наблюдение не равно подтверждённым деньгам. Неизвестные значения не заменяются нулями.</p>
+<button id="workbench">Покниколайь источники, факты и очередь</button><pre id="workbench-data"></pre>
+<h3>Сценарий ликвидности по отдельно принятым фактам</h3>
+<label>Начало <input id="plan-start" type="date"></label><label>Конец <input id="plan-end" type="date"></label>
+<label>Валюта <input id="plan-currency" maxlength="3" placeholder="RUB"></label>
+<label>Расходы базового сценария <input id="plan-base" placeholder="Сумма явно"></label>
+<label>Расходы стресс-сценария <input id="plan-stress" placeholder="Сумма явно"></label>
+<label>Гипотетический рост расходов, % <input id="plan-growth" inputmode="decimal" value="0"></label>
+<button id="capacity">Проверить сценарии без финансового действия</button><button id="capacity-chat">Покниколайь принятый сценарий в чате</button><pre id="capacity-data"></pre></section>
+<section data-view="sources" hidden><h2>Подключение Сбербанка</h2>
+<p>Проверка не открывает профиль, не запускает авторизацию и не обращается к банку.</p>
+<button id="sber-status">Проверить локальную готовность</button><div id="sber-status-data"></div></section>
+<section data-view="settings" hidden><h2>Telegram: личная проверка категорий</h2>
+<p>По умолчанию выключен. Telegram — внешняя облачная платформа: выбранные поля и категории будут доступны её инфраструктуре. Это отдельное разрешение, не согласие на Qwen. Сайт не запускает бота.</p>
+<label>Токен BotFather (только локально, DPAPI текущего пользователя Windows) <input id="tg-token" type="password" autocomplete="new-password" maxlength="125"></label>
+<button id="tg-save-token">Сохранить зашифрованно</button>
+<p>Затем отдельно запустите review polling из runbook и напишите боту /start в личном чате. Введите выданный код ниже.</p>
+<label>Одноразовый код <input id="tg-code" maxlength="8" autocomplete="off"></label>
+<label><input id="tg-merchant" type="checkbox">Магазин</label><label><input id="tg-description" type="checkbox">Описание</label>
+<label><input id="tg-amount" type="checkbox">Сумма и валюта</label><label><input id="tg-date" type="checkbox">Дата</label><label><input id="tg-card" type="checkbox">Маскированная карта</label>
+<label><input id="tg-finance" type="checkbox">Отдельно разрешаю финансовые отчёты: период, валюта, поступления/списания, доходы/расходы, категории, покрытие и короткий hash источника. Нужны поля суммы и даты. PDF и полные счета не пересылаются.</label><button id="tg-preview">Покниколайь точные разрешаемые поля</button><pre id="tg-preview-data"></pre>
+<label><input id="tg-consent" type="checkbox">Проверил preview; разрешаю эти поля и ручную классификацию только привязанному личному чату</label>
+<button id="tg-pair">Завершить привязку</button><button id="tg-status">Статус</button><button id="tg-disable">Отключить и отозвать кнопки</button><p id="tg-state" role="status"></p></section>
+<section data-view="settings" hidden><h2>Помощник категорий Qwen</h2><p>По умолчанию выключен. Только выбранные поля; счета, суммы, даты, токены и банковская история не включаются в запрос. Разрешение публичного чата здесь не действует.</p>
+<label>Имя владельца <input id="teacher-actor" maxlength="100" placeholder="Укажите один раз"></label>
+<label><input id="teacher-merchant" type="checkbox">Разрешить поле «merchant»</label><label><input id="teacher-description" type="checkbox">Разрешить поле «description» (может содержать личную информацию)</label>
+<label>Действует часов <input id="teacher-hours" type="number" min="1" max="168" value="1"></label><label>Максимум операций <input id="teacher-max" type="number" min="1" max="20" value="1"></label>
+<label>Общий дневной потолок журнала, RUB <input id="teacher-day" value="0.03" inputmode="decimal"></label><label>Общий месячный потолок журнала, RUB <input id="teacher-month" value="0.03" inputmode="decimal"></label>
+<p>Модель qwen3.7-flash; reasoning none; максимум 400 output tokens; до 0,03 ₽ на запрос. Исторические списания и UNKNOWN занимают общий бюджет; новое разрешение его не сбрасывает. Фактическое качество предложения не доказано. MOCK-разрешение не допускает настоящий транспорт.</p>
+<label><input id="teacher-grant-confirm" type="checkbox">Разрешаю выбранные поля только для предложений категории, в указанных пределах</label>
+<button id="teacher-grant">Сохранить отдельное разрешение</button><button id="teacher-refresh">Проверить разрешения</button><div id="teacher-permissions"></div><p id="teacher-policy-state" role="status"></p></section>
+<section data-view="settings" hidden><h2>Стоимость ИИ</h2><button id="ai-status">Покниколайь бюджет ИИ</button><button id="ai-key-check">Проверить ограничения ключа у AITunnel (действие владельца)</button><button id="ai-disable">Отключить облачный ИИ в этом процессе</button><pre id="ai-data"></pre>
+<fieldset><legend>Отдельное разрешение владельца: настоящий Qwen</legend>
+<p>Ключ уже сохранён. Его потолок не увеличивает локальные 2 ₽/день и 50 ₽/месяц.
+Публичная проверка передаёт только фиксированный синтетический пример. Реальные операции не отправляются.</p>
+<label>Владелец <input id="ai-owner" maxlength="100" value="owner"></label>
+<label>Срок, часов <input id="ai-owner-hours" type="number" min="1" max="168" value="24"></label>
+<label>Максимум запросов <input id="ai-owner-max" type="number" min="1" max="20" value="3"></label>
+<label><input id="ai-owner-confirm" type="checkbox">Разрешаю публичную проверку Qwen и ограниченное разрешение разработки; до 0,03 ₽/запрос, не больше выбранного числа запросов, без повторных отправок</label>
+<button id="ai-owner-activate">Включить Qwen и выполнить одну публичную проверку</button>
+<button id="ai-owner-revoke">Отозвать это разрешение</button>
+<p>Категории настоящих операций требуют отдельного выбора полей и разрешения в разделе обучения.</p></fieldset>
+</section><section data-view="research" hidden><h2>Исследование публичных источников</h2>
+<p>Публичная тема отправляется настроенному SearXNG. Только выбранные домены и максимум три страницы. Платный поиск и LLM выключены. Не вводите банковскую историю и персональные сведения.</p>
+<label>Публичная тема <input id="web-topic" maxlength="300" placeholder="Формула эффективной процентной ставки"></label>
+<label>SearXNG HTTPS endpoint с JSON API <input id="web-endpoint" maxlength="500" placeholder="https://search.example.org/search"></label>
+<label>Допустимые домены источников (через запятую) <input id="web-domains" maxlength="500" placeholder="cbr.ru, www.moex.com"></label>
+<label>Срок разрешения, часов <input id="web-hours" type="number" min="1" max="24" value="1"></label>
+<label><input id="web-consent" type="checkbox">Это только публичная тема; разрешаю бесплатный HTTP к указанному поиску и доменам. Условия instance проверены мной.</label>
+<button id="web-status">Проверить настройку без сети</button><button id="web-grant">Разрешить эту тему</button><button id="web-run">Начать исследование</button><button id="web-revoke">Отозвать разрешение</button><button id="web-tasks">История исследований</button>
+<button id="web-financial-topic">Подобрать публичную тему по расходам</button><button id="web-financial-run">Исследовать тему для финансов</button>
+<p id="web-state" role="status"></p><div id="web-reports"></div></section>
+<section data-view="research" hidden><h2>Публичные знания</h2><p>Отдельный поиск по уже подключённой базе знаний. Это не web discovery; новые источники ищутся выше.</p><label>Вопрос только по разрешённым публичным знаниям <input id="knowledge-question" maxlength="500"></label><button id="knowledge-answer">Найти источник</button><pre id="knowledge-data"></pre></section></main><script>FRONTEND_SCRIPT</script></body></html>

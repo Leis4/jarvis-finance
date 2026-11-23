@@ -1,0 +1,1 @@
+"""Invest database package."""

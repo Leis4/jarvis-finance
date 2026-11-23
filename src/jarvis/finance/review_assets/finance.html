@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="ru" data-web-only="false">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080A0E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JARVIS">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<title>JARVIS · Личные финансы</title>
+<style>__STYLE__</style>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.6 12 4l8 6.6V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5.5A2.5 2.5 0 0 1 3 17.5zM3 9h18M16 14h2"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8M4 12h16"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9 17.5 20 6.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v4h-4"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+<symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+<symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+<symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 10 12 4l9 6M5 10v8m4-8v8m6-8v8m4-8v8M3 20h18"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10M8 11l4 4 4-4M5 19h14"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"/></symbol>
+</defs></svg>
+
+<canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+
+<div id="boot" class="boot">
+  <div class="boot-mark">JARVIS</div>
+  <div class="boot-bar"><i></i></div>
+  <p class="boot-note">Загружаем сохранённые данные</p>
+</div>
+
+<div id="app" class="shell" hidden>
+  <aside class="rail">
+    <div class="brand"><span class="brand-mark">J</span><span class="brand-text"><b>JARVIS</b><small>личные финансы</small></span></div>
+    <nav class="rail-nav" aria-label="Разделы">
+      <a href="#/dashboard" data-nav="dashboard"><svg><use href="#i-home"/></svg><span>Обзор</span></a>
+      <a href="#/operations" data-nav="operations"><svg><use href="#i-list"/></svg><span>Операции</span><em id="nav-pending" class="nav-badge" hidden></em></a>
+      <a href="#/budget" data-nav="budget"><svg><use href="#i-wallet"/></svg><span>Бюджет</span></a>
+      <a href="#/plan" data-nav="plan"><svg><use href="#i-target"/></svg><span>Планирование</span></a>
+      <a href="#/qwen" data-nav="qwen"><svg><use href="#i-chat"/></svg><span>Qwen</span></a>
+      <a href="#/settings" data-nav="settings"><svg><use href="#i-sliders"/></svg><span>Настройки</span></a>
+    </nav>
+    <div class="rail-foot">
+      <div id="rail-sync" class="rail-sync"></div>
+      <button id="logout" class="btn ghost small" type="button">Выйти</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1 id="page-title">Обзор</h1>
+        <p id="page-sub" class="muted"></p>
+      </div>
+      <div class="topbar-actions">
+        <button id="sync-btn" class="btn ghost icon-only" type="button" title="Обновить данные" aria-label="Обновить данные"><svg><use href="#i-refresh"/></svg></button>
+        <button id="quick-add" class="btn primary" type="button"><svg><use href="#i-plus"/></svg><span>Записать</span></button>
+      </div>
+    </header>
+
+    <div id="banner" class="banner" role="status" hidden></div>
+
+    <section class="page" data-page="dashboard" id="page-dashboard">
+      <div class="grid">
+        <article class="card hero span-7">
+          <div class="hero-glow" aria-hidden="true"></div>
+          <div class="card-head">
+            <p class="eyebrow">Всего в известном контуре</p>
+            <span id="hero-freshness" class="chip"></span>
+          </div>
+          <p class="hero-value" id="hero-total">—</p>
+          <p class="hero-sub" id="hero-sub"></p>
+          <div class="split" id="hero-split"></div>
+          <p class="hero-warning" id="hero-warning" hidden></p>
+        </article>
+
+        <article class="card span-5">
+          <div class="card-head">
+            <p class="eyebrow">Можно потратить до следующего дохода</p>
+          </div>
+          <p class="hero-value sm" id="safe-amount">—</p>
+          <p class="hero-sub" id="safe-sub"></p>
+          <div class="scenarios" id="safe-scenarios"></div>
+          <p class="fineprint" id="safe-explainer">Пессимистичный — если тратить больше обычного, базовый — как в среднем, оптимистичный — если тратить меньше. Это прогноз, а не остаток на счёте.</p>
+          <div class="row" id="safe-action"></div>
+          <p class="fineprint" id="safe-fineprint"></p>
+        </article>
+
+        <article class="card span-8">
+          <div class="card-head">
+            <p class="eyebrow">Движение денег</p>
+            <div class="seg micro" id="chart-period" role="tablist">
+              <button type="button" data-days="7">7д</button>
+              <button type="button" data-days="30" class="on">30д</button>
+              <button type="button" data-days="90">90д</button>
+            </div>
+          </div>
+          <div class="chart" id="month-chart">
+            <div class="chart-tip" id="chart-tip" hidden></div>
+          </div>
+          <div class="legend-row" id="month-legend"></div>
+          <div class="metrics-strip">
+            <div><span>Потрачено за месяц</span><b id="m-spent">—</b><small id="m-spent-note"></small></div>
+            <div><span>Поступило</span><b id="m-income">—</b><small id="m-income-note"></small></div>
+            <div><span>Банк · Сбер</span><b id="m-bank">—</b><small id="m-bank-note"></small></div>
+          </div>
+          <p class="chart-insight" id="chart-insight" hidden></p>
+        </article>
+
+        <article class="card span-4">
+          <div class="card-head"><p class="eyebrow">Категории месяца</p></div>
+          <div class="donut-wrap">
+            <div id="cat-donut" class="donut"></div>
+            <ul id="cat-list" class="mini-list"></ul>
+          </div>
+        </article>
+
+        <article class="card span-7">
+          <div class="card-head">
+            <p class="eyebrow">Последние операции</p>
+            <a class="link" href="#/operations">Все операции<svg><use href="#i-chevron"/></svg></a>
+          </div>
+          <ul id="recent-ops" class="ops"></ul>
+        </article>
+
+        <article class="card span-5" id="goals-card">
+          <div class="card-head">
+            <p class="eyebrow">Накопления</p>
+            <a class="link" href="#/plan">Планирование<svg><use href="#i-chevron"/></svg></a>
+          </div>
+          <div id="dash-goals" class="goal-row"></div>
+          <p class="chart-insight" id="coin-note-line"></p>
+        </article>
+
+        <article class="card span-12">
+          <details class="help">
+            <summary>Как это работает</summary>
+            <div class="help-grid">
+              <div><b>Откуда суммы</b><span>Остаток — из последнего подтверждённого чтения Сбера; наличные — ваша оценка. Переводы между своими счетами не считаются доходом или расходом.</span></div>
+              <div><b>Что значит «можно потратить»</b><span>Прогноз до следующей даты дохода с учётом обычных трат и известных платежей. Это не гарантия: данных о будущем у приложения нет.</span></div>
+              <div><b>Как исправлять</b><span>Категорию меняйте в «Операциях» (нажмите на строку), лимиты — в «Бюджете», цели — в «Планировании». Всё сохраняется сразу.</span></div>
+              <div><b>Что видит Coin</b><span>Только ваши локальные цифры через read-only инструменты. Платежи, переводы и изменение банка недоступны.</span></div>
+            </div>
+          </details>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" data-page="operations" id="page-operations" hidden>
+      <div class="toolbar">
+        <label class="field search">
+          <svg><use href="#i-search"/></svg>
+          <input id="op-search" type="search" placeholder="Магазин или описание" autocomplete="off">
+        </label>
+        <div class="seg" id="op-kind" role="tablist">
+          <button type="button" data-kind="all" class="on">Все</button>
+          <button type="button" data-kind="expense">Расходы</button>
+          <button type="button" data-kind="income">Доходы</button>
+          <button type="button" data-kind="transfer">Переводы</button>
+        </div>
+        <label class="field select">
+          <select id="op-confirm">
+            <option value="all">Любой статус</option>
+            <option value="pending">Ждут подтверждения</option>
+            <option value="confirmed">Подтверждены мной</option>
+          </select>
+        </label>
+        <label class="field select">
+          <select id="op-category"><option value="">Все категории</option></select>
+        </label>
+        <label class="field select">
+          <select id="op-period">
+            <option value="30">30 дней</option>
+            <option value="90" selected>90 дней</option>
+            <option value="365">Год</option>
+          </select>
+        </label>
+      </div>
+      <div class="list-head">
+        <p id="op-summary" class="muted"></p>
+        <button id="op-refresh" class="btn ghost small" type="button"><svg><use href="#i-refresh"/></svg><span>Обновить</span></button>
+      </div>
+      <p class="hint">Нажмите на операцию, чтобы поменять категорию. «Подтвердить» фиксирует категорию и обучает локальные правила.</p>
+      <section class="card queue-card" id="queue-panel" hidden>
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Очередь по продавцам</p>
+            <p class="card-title" id="queue-title">Похожие операции</p>
+          </div>
+          <button id="queue-ai" class="btn ghost small" type="button">Qwen: разобрать</button>
+          <button id="queue-toggle" class="btn ghost small" type="button">Свернуть</button>
+        </div>
+        <p class="fineprint" id="queue-sub"></p>
+        <ul id="queue-list" class="queue-list"></ul>
+      </section>
+      <ul id="op-list" class="ops large"></ul>
+      <div class="list-foot">
+        <button id="op-more" class="btn ghost" type="button" hidden>Покниколайь ещё</button>
+        <p id="op-empty" class="empty" hidden>Ничего не найдено. Измените фильтры.</p>
+      </div>
+    </section>
+
+    <section class="page" data-page="budget" id="page-budget" hidden>
+      <div class="grid">
+        <article class="card span-12">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Бюджет месяца</p>
+              <p class="card-title" id="budget-title">—</p>
+            </div>
+            <span class="chip" id="budget-total-chip"></span>
+            <button id="budget-plan" class="btn ghost small" type="button">Собрать план</button>
+          </div>
+          <div class="budget-bar" id="budget-bar"></div>
+          <p class="hint">Введите лимит в строке и нажмите галочку — сумма сохранится сразу. Без лимита видно только фактический расход.</p>
+          <div class="budget-head">
+            <span>Категория</span><span>Потрачено</span><span>Лимит</span><span></span>
+          </div>
+          <ul id="budget-list" class="budget-list"></ul>
+          <p class="fineprint">Лимиты — ваш план, а не банковский факт. Переводы между своими счетами в расходы не входят.</p>
+        </article>
+        <article class="card span-12">
+          <div class="card-head"><p class="eyebrow">Что требует внимания</p></div>
+          <div class="attention">
+            <div>
+              <p class="metric-value sm" id="pending-count">—</p>
+              <p class="metric-note">операций без категории</p>
+              <a class="btn ghost small" href="#/operations">Разобрать</a>
+            </div>
+            <ul id="recurring-list" class="mini-list"></ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" data-page="plan" id="page-plan" hidden>
+      <div class="grid">
+        <article class="card span-12">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Цели накоплений</p>
+              <p class="card-title">Сколько откладывать</p>
+            </div>
+            <button id="goal-new" class="btn ghost small" type="button"><svg><use href="#i-plus"/></svg><span>Цель</span></button>
+          </div>
+          <div id="plan-goals" class="goal-grid"></div>
+          <p class="fineprint">Рекомендация считается из ваших лимитов и остатка на счетах. Это план, а не перевод денег.</p>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">До следующего дохода</p></div>
+          <p class="card-title" id="horizon-title">—</p>
+          <ul id="horizon-list" class="scenario-list"></ul>
+          <p class="hint">Пессимистичный сценарий — траты выше обычного, оптимистичный — ниже. Это оценка, а не обещание.</p>
+          <p class="fineprint" id="horizon-note"></p>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Проверить покупку</p></div>
+          <form id="purchase-form" class="inline-form">
+            <label class="field"><span>Цена, ₽</span><input name="price" inputmode="decimal" placeholder="Например 12000" required></label>
+            <button class="btn primary" type="submit">Проверить</button>
+          </form>
+          <div id="purchase-result" class="purchase-result" hidden></div>
+          <p class="fineprint">Ответ считается по сохранённым данным и сценариям, деньги не резервируются.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" data-page="qwen" id="page-qwen" hidden>
+      <div class="chat-shell">
+        <aside class="chat-side" id="chat-side">
+          <div class="chat-side-head">
+            <button id="chat-new" class="btn primary small" type="button"><svg><use href="#i-plus"/></svg><span>Новый чат</span></button>
+          </div>
+          <label class="field search compact">
+            <svg><use href="#i-search"/></svg>
+            <input id="chat-search" type="search" placeholder="Поиск по чатам" autocomplete="off">
+          </label>
+          <ul id="chat-sessions" class="chat-sessions"></ul>
+          <div id="chat-search-results" class="chat-results" hidden></div>
+          <div class="chat-side-foot">
+            <button id="chat-memory-btn" class="btn ghost small" type="button"><svg><use href="#i-spark"/></svg><span>Память <em id="memory-count">0</em></span></button>
+          </div>
+        </aside>
+        <article class="card chat-main">
+          <header class="chat-head">
+            <button id="chat-drawer" class="btn ghost icon-only chat-drawer-btn" type="button" aria-label="Чаты"><svg><use href="#i-list"/></svg></button>
+            <div class="chat-title">
+              <p class="eyebrow">Qwen</p>
+              <h2 id="chat-title">Новый чат</h2>
+            </div>
+            <div class="chat-head-actions">
+              <div class="seg micro" id="ai-mode" role="tablist">
+                <button type="button" data-mode="ai" class="on">Qwen</button>
+                <button type="button" data-mode="local">Расчёт</button>
+              </div>
+              <button id="chat-rename" class="btn ghost icon-only" type="button" title="Переименовать" aria-label="Переименовать"><svg><use href="#i-edit"/></svg></button>
+              <button id="chat-delete" class="btn ghost icon-only" type="button" title="Удалить чат" aria-label="Удалить чат"><svg><use href="#i-x"/></svg></button>
+            </div>
+          </header>
+          <div id="chat-thread" class="chat-thread" aria-live="polite"></div>
+          <div id="chat-suggest" class="chips"></div>
+          <form id="chat-form" class="chat-form">
+            <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Спросите Qwen о деньгах" autocomplete="off"></textarea>
+            <button id="chat-send" class="btn primary" type="submit">Отправить</button>
+          </form>
+          <p class="fineprint" id="chat-note">Qwen видит только ваши локальные финансы через read-only инструменты. Ключ провайдера не попадает в браузер.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" data-page="settings" id="page-settings" hidden>
+      <div class="grid">
+        <article class="card span-6">
+          <div class="card-head">
+            <p class="eyebrow">Подключение · Сбер</p>
+            <span class="chip" id="bank-state">—</span>
+          </div>
+          <dl class="kv" id="bank-kv"></dl>
+          <div class="row">
+            <button id="bank-refresh" class="btn primary" type="button"><svg><use href="#i-refresh"/></svg><span>Обновить Сбер</span></button>
+          </div>
+          <form id="pin-form" class="inline-form" hidden>
+            <label class="field"><span>PIN Сбера</span><input name="pin" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="5" pattern="[0-9]{5}" placeholder="5 цифр" required></label>
+            <button class="btn" type="submit">Подключить</button>
+          </form>
+          <p id="bank-note" class="fineprint"></p>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Синхронизация</p></div>
+          <form id="sync-form" class="stack">
+            <label class="field"><span>Интервал чтения банка, минут</span>
+              <select name="sync_minutes">
+                <option value="15">15</option><option value="30">30</option>
+                <option value="60">60</option><option value="120">120</option><option value="240">240</option>
+              </select>
+            </label>
+            <label class="switch"><input type="checkbox" name="bank_enabled"><span>Читать банк автоматически</span></label>
+            <label class="switch"><input type="checkbox" name="alerts_enabled"><span>Важные уведомления</span></label>
+            <label class="switch"><input type="checkbox" name="daily_enabled"><span>Утренняя сводка в Telegram</span></label>
+            <button class="btn primary" type="submit">Сохранить</button>
+          </form>
+          <p class="fineprint" id="sync-note"></p>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Деньги вне банка</p></div>
+          <p class="hint">Ваша оценка наличных и резерва. Банк эти суммы не подтверждает — они вводятся вручную.</p>
+          <form id="cash-form" class="stack">
+            <div class="field-row">
+              <label class="field"><span>Наличные от, ₽</span><input name="cash_low" inputmode="decimal" placeholder="Неизвестно"></label>
+              <label class="field"><span>до, ₽</span><input name="cash_high" inputmode="decimal" placeholder="Равно нижней"></label>
+            </div>
+            <label class="field"><span>Источник оценки</span>
+              <select name="cash_source"><option value="owner_estimate">Моя оценка</option><option value="owner_confirmed">Подтверждено мной</option></select>
+            </label>
+            <div class="field-row">
+              <label class="field"><span>Резерв, ₽</span><input name="reserve" inputmode="decimal" placeholder="0 только явно"></label>
+              <label class="field"><span>Защищено, ₽</span><input name="protected" inputmode="decimal" placeholder="0 только явно"></label>
+            </div>
+            <button class="btn primary" type="submit">Сохранить</button>
+          </form>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Регулярные доходы</p><button id="income-add" class="btn ghost small" type="button"><svg><use href="#i-plus"/></svg><span>Добавить</span></button></div>
+          <ul id="income-list" class="edit-list"></ul>
+          <p class="fineprint">Ожидаемый доход не считается полученными деньгами.</p>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Обязательные платежи</p><button id="obligation-add" class="btn ghost small" type="button"><svg><use href="#i-plus"/></svg><span>Добавить</span></button></div>
+          <p class="hint">Платежи до следующего дохода: аренда, связь, рассрочки. Они уменьшают безопасную сумму.</p>
+          <ul id="obligation-list" class="edit-list"></ul>
+          <label class="switch"><input type="checkbox" id="obligations-complete"><span>Все обязательства указаны</span></label>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Coin AI и бюджет</p><span class="chip" id="ai-state">—</span></div>
+          <dl class="kv" id="ai-kv"></dl>
+          <label class="switch mt-sm"><input type="checkbox" id="autopilot-classify"><span>Qwen сам ставит категории</span></label>
+          <label class="switch mt-sm"><input type="checkbox" id="autopilot-budget"><span>Qwen может применять план лимитов</span></label>
+          <div class="row"><button id="ai-journal-btn" class="btn ghost small" type="button" hidden>Сверить журнал</button></div>
+          <p class="fineprint" id="ai-hint">Ключ провайдера хранится локально и не отображается. Без Coin локальные расчёты и очередь категорий продолжают работать.</p>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Устройства и Face ID</p><span class="chip" id="device-chip">—</span></div>
+          <p class="body-text">Доверенные устройства входят без ключа до 90 дней. Face ID работает через passkey Safari — биометрия не покидает iPhone.</p>
+          <div class="row">
+            <button id="pair-device" class="btn primary small" type="button">Подключить устройство</button>
+            <button id="enable-passkey" class="btn ghost small" type="button" hidden>Включить Face ID</button>
+            <button id="logout-all" class="btn ghost small" type="button">Выйти везде</button>
+          </div>
+          <p id="device-status" class="fineprint" role="status"></p>
+          <ul id="devices-list" class="edit-list"></ul>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Интерфейс</p></div>
+          <p class="fineprint no-top">Фон</p>
+          <div class="seg" id="bg-mode" role="tablist">
+            <button type="button" data-bg="waves">Волны</button>
+            <button type="button" data-bg="fluid">Жидкость</button>
+            <button type="button" data-bg="static">Статичный</button>
+          </div>
+          <label class="switch mt-sm"><input type="checkbox" id="motion-toggle" checked><span>Анимации и переходы</span></label>
+          <label class="switch mt-sm"><input type="checkbox" id="glass-toggle" checked><span>Стеклянные панели</span></label>
+          <p class="fineprint">На слабом устройстве или при включённом «уменьшении движения» эффекты отключаются автоматически.</p>
+        </article>
+
+        <article class="card span-6">
+          <div class="card-head"><p class="eyebrow">Данные и приватность</p></div>
+          <p class="body-text">База, ключи и банковские сессии остаются на этом ПК. Наружу уходят только явные запросы Coin AI после вашего согласия. Публичный доступ закрыт авторизацией владельца.</p>
+          <div class="row">
+            <button id="backup-btn" class="btn ghost" type="button"><svg><use href="#i-download"/></svg><span>Создать резервную копию</span></button>
+          </div>
+          <p id="backup-note" class="fineprint"></p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Основная навигация">
+    <a href="#/dashboard" data-nav="dashboard"><svg><use href="#i-home"/></svg><span>Обзор</span></a>
+    <a href="#/operations" data-nav="operations"><svg><use href="#i-list"/></svg><span>Операции</span><em id="nav-pending-m" class="nav-badge" hidden></em></a>
+    <button id="tab-add" type="button" class="tab-add" aria-label="Записать операцию"><svg><use href="#i-plus"/></svg></button>
+    <a href="#/budget" data-nav="budget"><svg><use href="#i-wallet"/></svg><span>Бюджет</span></a>
+    <button id="tab-more" type="button" class="tab-more" aria-label="Ещё разделы" aria-haspopup="dialog">
+      <svg><use href="#i-sliders"/></svg><span>Ещё</span>
+    </button>
+  </nav>
+</div>
+
+<div id="more-sheet" class="sheet" hidden aria-hidden="true">
+  <div class="sheet-backdrop" data-close="1"></div>
+  <div class="sheet-panel compact" role="dialog" aria-modal="true" aria-labelledby="more-title">
+    <div class="sheet-head"><h2 id="more-title">Разделы</h2>
+      <button class="btn ghost icon-only" type="button" data-close="1" aria-label="Закрыть"><svg><use href="#i-x"/></svg></button>
+    </div>
+    <div class="sheet-body">
+      <div class="more-grid">
+        <a href="#/plan" data-nav="plan" class="more-item"><svg><use href="#i-target"/></svg><span>Планирование</span><small>Цели и прогноз</small></a>
+        <a href="#/qwen" data-nav="qwen" class="more-item"><svg><use href="#i-chat"/></svg><span>Qwen</span><small>Диалог и память</small></a>
+        <a href="#/settings" data-nav="settings" class="more-item"><svg><use href="#i-sliders"/></svg><span>Настройки</span><small>Сбер, AI, данные</small></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sheet" class="sheet" hidden aria-hidden="true">
+  <div class="sheet-backdrop" data-close="1"></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-head">
+      <h2 id="sheet-title">Записать</h2>
+      <button class="btn ghost icon-only" type="button" data-close="1" aria-label="Закрыть"><svg><use href="#i-x"/></svg></button>
+    </div>
+    <div id="sheet-body" class="sheet-body"></div>
+  </div>
+</div>
+
+<div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+<script>__SCRIPT__</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html><html lang="ru" data-web-only="false">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080a0e"><meta name="robots" content="noindex">
+<title>JARVIS — вход владельца</title>
+<style>
+:root{--bg:#07090d;--surface:rgba(255,255,255,.055);--line:rgba(255,255,255,.09);--text:#eef2f8;--muted:#a3adbf;--faint:#7d8798;--accent:#3ddc97;--accent-dim:#1f6b4d;--danger:#f2708a}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:
+ radial-gradient(900px 480px at 15% -10%,rgba(61,220,151,.10),transparent 60%),
+ radial-gradient(700px 420px at 90% 0%,rgba(127,176,255,.08),transparent 62%),var(--bg);
+ color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI Variable Display","Segoe UI",Inter,sans-serif;letter-spacing:-.011em}
+.card{width:min(420px,100%);padding:28px 24px;border-radius:24px;border:1px solid var(--line);
+ background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
+ backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
+ box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 30px 80px -40px #000}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.mark{width:34px;height:34px;border-radius:11px;display:grid;place-content:center;font-weight:700;font-size:14px;
+ color:var(--accent);background:linear-gradient(155deg,rgba(61,220,151,.22),rgba(61,220,151,.04));border:1px solid rgba(61,220,151,.32)}
+.brand b{font-size:13px;letter-spacing:.16em}
+h1{font-size:22px;margin:0 0 6px;font-weight:620;letter-spacing:-.03em}
+p{margin:0 0 16px;color:var(--muted);font-size:13.5px}
+form{display:grid;gap:12px}
+label{display:grid;gap:6px;font-size:12px;color:var(--faint)}
+input[type=password]{height:46px;padding:0 14px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-size:16px}
+input[type=password]:focus{outline:none;border-color:rgba(61,220,151,.5)}
+.remember{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;cursor:pointer}
+.remember input{appearance:none;width:38px;height:22px;border-radius:999px;background:#1b2230;border:1px solid var(--line);position:relative;transition:.15s;margin:0}
+.remember input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#6b7686;transition:.16s}
+.remember input:checked{background:var(--accent-dim);border-color:#2b6a52}
+.remember input:checked::after{transform:translateX(16px);background:var(--accent)}
+button{height:46px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+button.primary{background:linear-gradient(160deg,#63f0b4,#27c286);border-color:rgba(120,255,200,.5);color:#04170f}
+button.faceid{display:flex;align-items:center;justify-content:center;gap:9px;background:rgba(61,220,151,.12);border-color:rgba(61,220,151,.35);color:#c9ffe8}
+button:disabled{opacity:.5;cursor:not-allowed}
+.sep{display:flex;align-items:center;gap:10px;color:var(--faint);font-size:11.5px;margin:4px 0}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.status{min-height:18px;font-size:12.5px;color:var(--warn,#f5b45c);margin:6px 0 0}
+.fine{font-size:11.5px;color:var(--faint);margin:14px 0 0;line-height:1.5}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:420px){.card{padding:22px 18px;border-radius:20px}}
+</style></head>
+<body>
+<main class="card">
+  <div class="brand"><span class="mark">J</span><b>JARVIS</b></div>
+  <h1>Вход владельца</h1>
+  <p id="intro">Введите ключ владельца один раз — дальше это устройство можно помнить до 90 дней и входить по Face ID.</p>
+  <form id="owner-login">
+    <label>Ключ владельца
+      <input id="owner-key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required aria-label="Ключ владельца">
+    </label>
+    <label class="remember"><input id="remember" type="checkbox" checked><span>Запомнить это устройство</span></label>
+    <button class="primary" type="submit">Войти</button>
+  </form>
+  <div class="sep">или</div>
+  <button id="faceid" class="faceid" type="button" hidden>
+    <svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M20 8V5a1 1 0 0 0-1-1h-3M4 16v3a1 1 0 0 0 1 1h3M20 16v3a1 1 0 0 1-1 1h-3M9 9v1.5M15 9v1.5M9.5 15c.7.7 1.5 1 2.5 1s1.8-.3 2.5-1"/></svg>
+    Войти через Face ID
+  </button>
+  <p id="owner-status" class="status" role="status" aria-live="polite"></p>
+  <p class="fine">Ключ хранится только на этом компьютере. Сайт остаётся приватным: снаружи доступен лишь вход, а данные — после авторизации.</p>
+</main>
+<script>
+(() => {
+  const status = document.getElementById('owner-status');
+  const say = (text) => { status.textContent = text; };
+  const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const unb64 = (value) => {
+    const pad = '='.repeat((4 - value.length % 4) % 4);
+    const raw = atob((value + pad).replace(/-/g,'+').replace(/_/g,'/'));
+    return Uint8Array.from(raw, (ch) => ch.charCodeAt(0));
+  };
+  const post = async (path, body) => {
+    const response = await fetch(path, {method:'POST', credentials:'same-origin', cache:'no-store',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify(body || {})});
+    let data = null; try { data = await response.json(); } catch { }
+    if (!response.ok) throw new Error((data && (data.detail || data.message)) || ('HTTP ' + response.status));
+    return data || {};
+  };
+
+  // A remembered device restores the session without any key.
+  (async () => {
+    try { await post('/auth/device'); location.replace('/'); }
+    catch { /* no remembered device: normal login */ }
+  })();
+
+  const faceButton = document.getElementById('faceid');
+  if (window.PublicKeyCredential && navigator.credentials && window.isSecureContext) {
+    faceButton.hidden = false;
+  }
+  faceButton.addEventListener('click', async () => {
+    faceButton.disabled = true;
+    say('Запрашиваю Face ID…');
+    try {
+      const begin = await post('/auth/passkey/login/begin');
+      const publicKey = begin.options;
+      publicKey.challenge = unb64(publicKey.challenge);
+      publicKey.allowCredentials = (publicKey.allowCredentials || []).map((item) => ({...item, id: unb64(item.id)}));
+      const assertion = await navigator.credentials.get({publicKey});
+      const payload = {
+        id: assertion.id,
+        rawId: b64(assertion.rawId),
+        type: assertion.type,
+        response: {
+          clientDataJSON: b64(assertion.response.clientDataJSON),
+          authenticatorData: b64(assertion.response.authenticatorData),
+          signature: b64(assertion.response.signature),
+          userHandle: assertion.response.userHandle ? b64(assertion.response.userHandle) : null,
+        },
+      };
+      await post('/auth/passkey/login/complete', {challenge_id: begin.challenge_id, credential: payload});
+      location.replace('/');
+    } catch (error) {
+      say('Face ID не сработал: ' + (error && error.message ? error.message : 'повторите или войдите ключом'));
+      faceButton.disabled = false;
+    }
+  });
+
+  document.getElementById('owner-login').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const field = document.getElementById('owner-key');
+    const key = field.value;
+    field.value = '';
+    say('Проверяю ключ…');
+    try {
+      await post('/auth/session', {key, remember: document.getElementById('remember').checked});
+      location.replace('/');
+    } catch (error) {
+      say('Вход не подтверждён: ' + (error.message || 'проверьте ключ'));
+    }
+  });
+})();
+</script>
+</body></html>

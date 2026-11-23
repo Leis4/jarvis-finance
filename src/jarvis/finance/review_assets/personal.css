@@ -1,0 +1,217 @@
+/* Personal CFO dashboard: quiet chrome, numbers first, one accent. */
+/* Global shell overrides live here too so the running service updates on reload
+   without a restart; app.css carries the same tokens for the legacy pages. */
+body{font:14px/1.55 "Inter","Segoe UI Variable","Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:-.006em;-webkit-font-smoothing:antialiased}
+.page-header{justify-content:flex-end;margin-bottom:10px}.page-header>div{display:none}
+.sidebar{width:216px;padding:18px 10px;background:var(--bg);border-right:1px solid var(--line);gap:2px}
+.brand{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:6px 12px 16px}
+.sidebar button{text-align:left;border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:8px;font-size:13px;margin:0}
+.sidebar button:hover{background:var(--panel-2);color:var(--ink)}
+.sidebar button[aria-current=page]{background:var(--panel-2);color:var(--ink);font-weight:550}
+.sidebar small{display:none}
+main{margin-left:216px;max-width:none;width:calc(100% - 216px);box-sizing:border-box;padding:28px 32px 64px}
+button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;margin:0 6px 6px 0;min-height:34px;font-size:13px;font-weight:500}
+button:hover{border-color:var(--muted);background:var(--panel-2)}
+.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:550}
+.primary:hover{opacity:.88;background:var(--ink)}
+input,select,textarea{background:var(--input);border:1px solid transparent;border-radius:8px;padding:8px 10px;min-height:36px;font-size:13px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+section{background:transparent;border:0;padding:0;border-radius:0;margin:20px 0}
+details{background:transparent;border:0;margin:14px 0}
+summary{font-size:13px;color:var(--muted);padding:10px 0;border-top:1px solid var(--line);list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'+';float:right;color:var(--muted)}
+details[open]>summary::after{content:'−'}
+details[open]>summary{color:var(--ink);margin-bottom:10px}
+@media(max-width:800px){.sidebar{position:sticky;top:0;width:100%;padding:8px;border-right:0;border-bottom:1px solid var(--line);background:var(--bg)}main{margin:0;width:100%;padding:20px 16px 48px}}
+
+#personal-cfo{max-width:none;margin:0 auto;padding:0;background:transparent;border:0;box-shadow:none;min-width:0}
+#personal-cfo .cfo-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:2px 0 18px;border-bottom:1px solid var(--line)}
+#personal-cfo .cfo-eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+#personal-cfo h2{font-size:clamp(26px,3.2vw,38px);line-height:1.08;letter-spacing:-.035em;font-weight:650;margin:0}
+#personal-cfo h2 span{color:var(--muted)}
+#personal-cfo h3{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0 0 10px}
+#personal-cfo h4{font-size:13px;font-weight:600;margin:20px 0 8px}
+#personal-cfo p{color:var(--muted);font-size:13px;margin:6px 0}
+#personal-cfo small{display:block;margin-top:8px;font-size:12px;line-height:1.5;color:var(--muted)}
+#personal-cfo a{color:var(--accent);font-size:12px}
+#personal-cfo .cfo-hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right;max-width:320px}
+#personal-cfo .cfo-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-size:11px;color:var(--muted);white-space:nowrap}
+#personal-cfo .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 24px}
+#personal-cfo .metric{padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);box-shadow:none;min-width:0}
+#personal-cfo .metric strong{display:block;font-size:clamp(20px,2vw,26px);font-weight:600;letter-spacing:-.03em;margin:6px 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#personal-cfo .metric span{font-size:11px;color:var(--muted)}
+#personal-cfo .metric:last-child{border-color:var(--line)}
+#personal-cfo .cfo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+#personal-cfo .cfo-panel,#personal-cfo details{padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin:12px 0;min-width:0;box-shadow:none}
+#personal-cfo .cfo-grid .cfo-panel{margin:0}
+#personal-cfo details>summary{cursor:pointer;font-size:13px;font-weight:500;color:var(--ink);list-style:none;padding:0;border:0}
+#personal-cfo details>summary::-webkit-details-marker{display:none}
+#personal-cfo details>summary::after{content:'+';float:right;color:var(--muted)}
+#personal-cfo details[open]>summary{margin-bottom:14px}
+#personal-cfo details[open]>summary::after{content:'−'}
+#personal-cfo .cfo-section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
+#personal-cfo .cfo-section-head strong{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+#personal-cfo .cfo-flow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 14px}
+#personal-cfo .cfo-flow div{padding:12px;border-radius:10px;background:var(--input)}
+#personal-cfo .cfo-flow strong{display:block;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+#personal-cfo .cfo-flow span{font-size:11px;color:var(--muted)}
+#personal-cfo .cfo-bar-row{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;margin:10px 0}
+#personal-cfo .cfo-bar-label{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}
+#personal-cfo .cfo-track{height:6px;border-radius:999px;background:var(--input);overflow:hidden}
+#personal-cfo .cfo-track i{display:block;height:100%;border-radius:999px;background:var(--ink);opacity:.7}
+#personal-cfo .cfo-chart{width:100%;min-height:120px}
+#personal-cfo .cfo-chart-legend{display:flex;justify-content:space-between;gap:6px;font-size:10px;color:var(--muted);margin-top:6px}
+#personal-cfo .cfo-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+#personal-cfo .cfo-actions button{margin:0}
+#personal-cfo .cfo-hero-side .cfo-actions{justify-content:flex-end;margin:2px 0}
+#personal-cfo .cfo-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 4px}
+#personal-cfo .cfo-controls select{max-width:220px}
+#personal-cfo .cfo-quick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px}
+#personal-cfo .cfo-quick button{font-size:12px;padding:6px 10px;border-radius:999px;background:transparent;color:var(--muted)}
+#personal-cfo .cfo-quick button:hover{color:var(--ink);border-color:var(--muted)}
+#personal-cfo .cfo-filter{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end;gap:10px;margin:14px 0}
+#personal-cfo .cfo-filter label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted);margin:0}
+#personal-cfo input,#personal-cfo select,#personal-cfo textarea{max-width:100%;min-width:0;box-sizing:border-box}
+#personal-cfo input:not([type=checkbox]),#personal-cfo select,#personal-cfo button{min-height:36px}
+#personal-cfo input[type=checkbox]{width:auto;min-height:0}
+#personal-cfo label:has(input[type=checkbox]){min-height:36px;display:flex;gap:8px;align-items:center;margin:8px 0}
+#personal-cfo .cfo-transaction{padding:12px 0;border-top:1px solid var(--line)}
+#personal-cfo .cfo-transaction-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+#personal-cfo .cfo-transaction-head strong{font-size:13px;font-weight:550;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#personal-cfo .cfo-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}
+#personal-cfo .cfo-goal{padding:12px 0;border-top:1px solid var(--line)}
+#personal-cfo .cfo-reason{border:0;background:transparent;margin:4px 0;padding:0}
+#personal-cfo .cfo-reason summary{font-size:12px;padding:6px 0}
+#personal-cfo .cfo-scroll{overflow-x:auto}
+#personal-cfo .cfo-stale,#personal-cfo .cfo-warning{color:var(--warning)}
+#personal-cfo .cfo-positive{color:var(--positive)}
+#personal-cfo .cfo-expense{color:var(--negative)}
+#personal-cfo #cfo-home-pulse{grid-template-columns:repeat(3,minmax(0,1fr));margin:12px 0}
+#personal-cfo .cfo-mini-metric h3{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 6px;font-weight:600}
+#personal-cfo .cfo-mini-metric strong{font-size:22px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#personal-cfo #cfo-home-calendar small{display:block;margin:8px 0;line-height:1.5}
+#personal-cfo #cfo-clusters .cfo-panel{border-radius:10px;padding:14px}
+#personal-cfo #cfo-status{min-height:1.6em}
+#personal-cfo h4,#personal-cfo p,#personal-cfo small{overflow-wrap:anywhere}
+#personal-cfo [data-cfo-screen][hidden]{display:none!important}
+#personal-cfo [data-cfo-screen]{min-width:0;max-width:100%}
+#personal-cfo .cfo-grid,#personal-cfo .cfo-panel,#personal-cfo form{min-width:0}
+#personal-cfo .cfo-scroll table{font-size:12px}
+
+@media(max-width:1100px){#personal-cfo .cfo-filter{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){
+ #personal-cfo .cfo-hero{flex-direction:column;align-items:flex-start;gap:10px;padding-bottom:14px}
+ #personal-cfo .cfo-hero-side{align-items:flex-start;text-align:left;max-width:none;flex-direction:column;gap:6px}
+ #personal-cfo .cfo-hero-side .cfo-actions{justify-content:flex-start;width:100%}
+ #personal-cfo .cfo-hero-side .cfo-actions button{flex:1 1 45%}
+ #personal-cfo .metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 18px}
+ #personal-cfo .metric{padding:12px}
+ #personal-cfo .metric strong{font-size:20px}
+ #personal-cfo .cfo-grid{grid-template-columns:minmax(0,1fr);gap:10px;margin:14px 0}
+ #personal-cfo .cfo-panel,#personal-cfo details{padding:14px;margin:10px 0}
+ #personal-cfo .cfo-filter{grid-template-columns:minmax(0,1fr)}
+ #personal-cfo .cfo-actions button{flex:1 1 45%}
+ #personal-cfo #cfo-home-pulse{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px){
+ #personal-cfo .metrics{grid-template-columns:minmax(0,1fr)}
+ #personal-cfo h2{font-size:28px}
+}
+
+/* Bento motion system: transform/opacity only. */
+:root{
+ --ease-smooth:cubic-bezier(.22,1,.36,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);
+ --dur-fast:180ms;--dur-base:320ms;--dur-slow:600ms;
+}
+html{scroll-behavior:smooth}
+#personal-cfo{--bento-bg:#090A0F;--bento-card:rgba(18,20,28,.78);--bento-line:#1E2230;--bento-blue:#3B82F6;--bento-green:#10B981;--bento-red:#EF4444}
+section[data-view]:not(#personal-cfo){display:none!important}
+#personal-cfo #cfo-home-pulse,#personal-cfo #cfo-home-calendar,#personal-cfo #cfo-home-goals,#personal-cfo #cfo-home-actions{display:none!important}
+#personal-cfo .bento-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;margin:18px 0 26px}
+#personal-cfo .bento-card{grid-column:span 6;min-width:0;padding:20px;border:1px solid var(--bento-line);border-radius:22px;background:var(--bento-card);backdrop-filter:blur(18px) saturate(130%);box-shadow:0 20px 60px #0006,inset 0 1px 0 #ffffff0a;opacity:1;transform:none;animation:bentoIn var(--dur-slow) var(--ease-smooth) backwards;will-change:transform,opacity}
+#personal-cfo .bento-card:nth-child(1){animation-delay:40ms}
+#personal-cfo .bento-card:nth-child(2){animation-delay:90ms}
+#personal-cfo .bento-card:nth-child(3){animation-delay:140ms}
+#personal-cfo .bento-card:nth-child(4){animation-delay:190ms}
+#personal-cfo .bento-main{grid-column:span 7;min-height:350px}
+#personal-cfo .bento-sber{grid-column:span 5;min-height:0}
+#personal-cfo .bento-charts{grid-column:span 12;min-height:380px}
+#personal-cfo #cfo-learning{grid-column:span 5;min-height:380px}
+#personal-cfo .bento-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+#personal-cfo .bento-card .metrics{grid-template-columns:repeat(2,minmax(0,1fr));margin:8px 0 12px;min-height:300px}
+#personal-cfo #cfo-month-flow{min-height:84px}
+#personal-cfo #cfo-category-chart{min-height:96px}
+#personal-cfo #cfo-cash-chart{min-height:96px}
+#personal-cfo #cfo-group-review{min-height:220px}
+#personal-cfo .bento-card .metric{padding:12px;border-radius:14px;background:#12141C}
+#personal-cfo .bento-card .metric strong{font-size:clamp(22px,2.4vw,32px);color:#F9FAFB}
+#personal-cfo .bento-card .cfo-grid{grid-template-columns:1fr 1fr;margin:8px 0 0}
+#personal-cfo .bento-card .cfo-panel{padding:12px;border-radius:14px;background:#12141C;margin:0}
+#personal-cfo .bento-card h3{color:#F9FAFB}
+#personal-cfo .bento-card p,#personal-cfo .bento-card small{color:var(--muted)}
+#personal-cfo .bento-card .cfo-chip{color:#93C5FD;border-color:#1E3A8A;background:#111827}
+#personal-cfo .bento-card:hover{transform:translateY(-2px) scale(1.01);box-shadow:0 26px 70px #0008,inset 0 1px 0 #ffffff12;backdrop-filter:blur(22px) saturate(140%)}
+#personal-cfo .bento-card,button,.cfo-track i,.cfo-pin{transition:transform var(--dur-base) var(--ease-smooth),opacity var(--dur-base) var(--ease-smooth),box-shadow var(--dur-base) var(--ease-smooth),border-color var(--dur-fast) var(--ease-smooth)}
+button:active{transform:scale(.98)}
+#personal-cfo .cfo-track{height:7px;background:#1E2230;border-radius:99px;overflow:hidden}
+#personal-cfo .cfo-track i{display:block;width:100%;height:100%;transform-origin:left;border-radius:99px;background:linear-gradient(90deg,var(--bento-blue),var(--bento-green));transition:transform var(--dur-slow) var(--ease-smooth)}
+#personal-cfo .cfo-pin{margin:12px 0 0;padding:12px;border:1px solid #1E3A8A;border-radius:14px;background:#0F172A;animation:pinIn var(--dur-base) var(--ease-smooth) both}
+#personal-cfo .cfo-pin input{letter-spacing:.35em;text-align:center;font-size:20px;border-color:#1E3A8A}
+#personal-cfo .cfo-pin input:focus{box-shadow:0 0 0 4px #3B82F633,0 0 24px #3B82F655}
+#personal-cfo .cfo-pin-success{color:var(--bento-green)!important;animation:successIn var(--dur-base) var(--ease-spring) both}
+#personal-cfo .cfo-shake{animation:shake var(--dur-base) var(--ease-smooth) both}
+@keyframes bentoIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pinIn{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes successIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(min-width:901px){
+ #personal-cfo .bento-main{height:auto;overflow:visible}
+ #personal-cfo .bento-sber{height:auto;overflow:visible}
+ #personal-cfo .bento-charts{height:auto;overflow:visible}
+ #personal-cfo #cfo-learning{height:auto;overflow:visible}
+ #personal-cfo #cfo-home-pulse{min-height:150px}
+ #personal-cfo #cfo-home-calendar{min-height:100px}
+}
+@media(max-width:900px){#personal-cfo .bento-main,#personal-cfo .bento-sber,#personal-cfo .bento-charts,#personal-cfo #cfo-learning{grid-column:span 12}#personal-cfo .bento-card .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){#personal-cfo .bento-card{padding:16px;border-radius:18px}#personal-cfo .bento-card .cfo-grid{grid-template-columns:1fr}}
+
+/* Zero-CLS skeletons, a11y and light theme. */
+#personal-cfo .bento-card{position:relative;min-height:0}
+#personal-cfo .skeleton{position:absolute;inset:20px;display:flex;flex-direction:column;gap:12px;opacity:1;visibility:visible;pointer-events:none;transition:opacity var(--dur-base) var(--ease-smooth),visibility var(--dur-base)}
+#personal-cfo .skeleton i{display:block;height:18px;border-radius:9px;background:linear-gradient(90deg,#1E2230 0%,#252A3A 50%,#1E2230 100%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
+#personal-cfo .skeleton i:first-child{height:28px;width:55%}
+#personal-cfo .skeleton i:nth-child(2){width:82%}
+#personal-cfo .skeleton i:nth-child(3){width:64%}
+#personal-cfo .bento-card[data-ready="1"] .skeleton{opacity:0;visibility:hidden}
+#personal-cfo .bento-card:not([data-ready="1"])>:not(.skeleton){visibility:hidden}
+#personal-cfo .cfo-progress{height:6px;border-radius:99px;background:#1E2230;overflow:hidden;margin:8px 0 12px}
+#personal-cfo .cfo-progress i{display:block;width:100%;height:100%;background:linear-gradient(90deg,var(--bento-blue),var(--bento-green));transform:scaleX(0);transform-origin:left;transition:transform var(--dur-slow) var(--ease-smooth)}
+#personal-cfo :focus-visible{outline:2px solid #3B82F6;outline-offset:2px;border-radius:8px}
+#personal-cfo button:focus-visible,#personal-cfo input:focus-visible,#personal-cfo select:focus-visible{outline:2px solid #3B82F6;outline-offset:2px}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){#personal-cfo .skeleton i{animation:none}}
+:root[data-theme=light] #personal-cfo{--bento-bg:#F7F8FB;--bento-card:#FFFFFF;--bento-line:#E5E7EB}
+:root[data-theme=light] #personal-cfo .bento-card{background:#fff;box-shadow:0 12px 34px #11182712}
+:root[data-theme=light] #personal-cfo .bento-card .metric,:root[data-theme=light] #personal-cfo .bento-card .cfo-panel{background:#F7F8FB}
+:root[data-theme=light] #personal-cfo .bento-card h3,:root[data-theme=light] #personal-cfo .bento-card .metric strong{color:#111827}
+:root[data-theme=light] #personal-cfo .skeleton i{background:linear-gradient(90deg,#E5E7EB 0%,#F1F3F7 50%,#E5E7EB 100%);background-size:200% 100%}
+@media(prefers-color-scheme:light){html:not([data-theme=dark]) #personal-cfo{--bento-bg:#F7F8FB;--bento-card:#FFFFFF;--bento-line:#E5E7EB}}
+html{scrollbar-gutter:stable}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]) #personal-cfo .bento-card{background:#fff;color:#111827}}
+@font-face{font-family:"InterFallback";src:local("Arial");font-display:swap;size-adjust:107%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
+body{font-family:"Inter","InterFallback",system-ui,-apple-system,"Segoe UI",sans-serif}
+#personal-cfo{min-height:1100px;contain:layout paint;contain-intrinsic-size:1100px}#personal-cfo:not(.cfo-ready){display:block;visibility:hidden}
+@media(max-width:900px){#personal-cfo{min-height:900px}}
+#personal-cfo.cfo-ready{visibility:visible}
+
+#personal-cfo:not(.cfo-ready)>.cfo-hero,#personal-cfo:not(.cfo-ready)>#cfo-status{visibility:visible}
+#personal-cfo #cfo-import-card{grid-column:span 12}
+#personal-cfo #cfo-import-form{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:8px 0}
+#personal-cfo #cfo-import-form label{flex:1 1 220px;margin:0}
+#personal-cfo #cfo-import-preview{max-height:320px;overflow:auto;margin:10px 0}
+#personal-cfo #cfo-import-preview table{font-size:12px}
+@media(max-width:900px){#personal-cfo #cfo-import-card{grid-column:span 12}}
+
+#cfo-daily-briefing{white-space:pre-wrap}

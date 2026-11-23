@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="JARVIS">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#12181f"/><stop offset="1" stop-color="#080a0e"/>
+</linearGradient>
+<linearGradient id="mint" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#57e8a9"/><stop offset="1" stop-color="#22a876"/>
+</linearGradient>
+</defs>
+<rect width="512" height="512" rx="120" fill="url(#bg)"/>
+<circle cx="256" cy="256" r="196" fill="none" stroke="#24303c" stroke-width="6"/>
+<path d="M256 106c6 74 20 88 94 94-74 6-88 20-94 94-6-74-20-88-94-94 74-6 88-20 94-94z" fill="url(#mint)"/>
+</svg>
